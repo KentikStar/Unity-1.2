@@ -5,9 +5,9 @@ using UnityEngine.AI;
 public class PlayerControl : MonoBehaviour
 {
     private NavMeshAgent agent;
-    [SerializeField]
-    private List<Transform> wayPoint;
+    [SerializeField] private List<Transform> wayPoint;
     private int indexPoint = 0;
+
     private Camera cameraMain;
 
     private Animator animator;
@@ -20,11 +20,13 @@ public class PlayerControl : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         cameraMain = Camera.main;
+
     }
 
     void FixedUpdate()
     {        
         AnimControl();
+
     }
 
     private void AnimControl()
@@ -36,6 +38,7 @@ public class PlayerControl : MonoBehaviour
         {
             animator.SetBool("isRunning", true);
             animator.SetBool("isAim", false);
+
             shotPistol.setIsAim(false);
         }
         else
@@ -46,9 +49,14 @@ public class PlayerControl : MonoBehaviour
             if(indexPoint > 0)
                 shotPistol.setIsAim(true);
 
-            ForwardToObject();
+            if(Input.GetMouseButtonUp(0))
+                ForwardToObject();
+            
         }
+
     }
+
+
 
     private Vector3 GetHitPosition()
     {
@@ -57,9 +65,6 @@ public class PlayerControl : MonoBehaviour
 
         if (Physics.Raycast(cameraMain.ScreenPointToRay(Input.mousePosition), out rayHit))
             hitPosition = rayHit.point;
-        if(Input.touchCount > 0)
-            if (Physics.Raycast(cameraMain.ScreenPointToRay(Input.GetTouch(0).position), out rayHit))
-                hitPosition = rayHit.point;
 
         return hitPosition;
     }
@@ -67,14 +72,14 @@ public class PlayerControl : MonoBehaviour
 
     public void GoNextWayPoint()
     {
-        agent.SetDestination(wayPoint[indexPoint++].position);
+        agent.SetDestination(wayPoint[indexPoint++].position);        
     }
 
     private void ForwardToObject()
     {
         Vector3 direction = (GetHitPosition() - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z - 0.8f));
-        transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * 5);
+        transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, 5 * Time.deltaTime);
     }
 
 }

@@ -32,16 +32,23 @@ public class shotPistol : MonoBehaviour
         this.isAim = set;
     }
 
-    private void Shot()
+    private bool Shot()
     {
+        Vector3 positionAim = GetHitPosition();
+
+        if (positionAim == Vector3.zero)
+            return false;
+
         bullet = poolManager.GetObject().transform;
         bullet.transform.position = startBullet.position;
 
         bullet.gameObject.SetActive(true);
 
-        bullet.LookAt(GetHitPosition());
+        bullet.LookAt(positionAim);
 
         bullet.SetParent(gameManag.transform);
+
+        return true;
     }
 
 
@@ -52,11 +59,7 @@ public class shotPistol : MonoBehaviour
         RaycastHit rayHit;
         Camera mainCamera = Camera.main;
 
-
         if(Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out rayHit))
-                hitPosition = rayHit.point;
-        if (Input.touchCount > 0)
-            if (Physics.Raycast(mainCamera.ScreenPointToRay(Input.GetTouch(0).position), out rayHit))
                 hitPosition = rayHit.point;
 
         return hitPosition;
